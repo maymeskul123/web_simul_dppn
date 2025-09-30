@@ -46,7 +46,10 @@ class DPPSimulation {
             totalPP: 0,
             activities: { volunteer: 0, education: 0, census: 0, none: 0 },
             averageSatisfaction: 0,
-            autoInvestments: 0
+            autoInvestments: 0,
+            voluntaryContributions: 0,    // ⭐ НОВОЕ: Добровольные взносы
+            infrastructureMaintenance: 0, // ⭐ НОВОЕ: Расходы на обслуживание
+            investmentRevenue: 0          // ⭐ НОВОЕ: Доход от инвестиций
         };
         
         // Симуляция активности жителей
@@ -56,16 +59,17 @@ class DPPSimulation {
             monthStats.totalPP += resident.pp;
         });
         
+        // ⭐ НОВОЕ: Сбор добровольных взносов
+        monthStats.voluntaryContributions = this.collectVoluntaryContributions();
+        
         // Авто-инвестиции если включены
         if (this.autoInvestEnabled && this.month % 3 === 0) {
             monthStats.autoInvestments = this.processAutoInvestments();
         }
         
-        // Расчет средней удовлетворенности
-        monthStats.averageSatisfaction = this.residents.length > 0 
-            ? this.residents.reduce((sum, r) => sum + r.satisfaction, 0) / this.residents.length
-            : 0;
-            
+        // ⭐ НОВОЕ: Автоматическое обслуживание инфраструктуры
+        monthStats.infrastructureMaintenance = this.performAutomaticMaintenance();
+        
         // Обработка инфраструктуры
         this.infrastructure.forEach(infra => {
             infra.decay();
@@ -77,9 +81,59 @@ class DPPSimulation {
             monthlyInvestmentIncome += investment.processMonth();
         });
         monthStats.monthlyInvestmentIncome = monthlyInvestmentIncome;
+        monthStats.investmentRevenue = monthlyInvestmentIncome;
+        this.publicFunds += monthlyInvestmentIncome; // ⭐ ДОХОД В ФОНДЫ
+            
+        // Расчет средней удовлетворенности
+        monthStats.averageSatisfaction = this.residents.length > 0 
+            ? this.residents.reduce((sum, r) => sum + r.satisfaction, 0) / this.residents.length
+            : 0;
             
         this.history.push(monthStats);
         return monthStats;
+    }
+    
+    // ⭐ НОВЫЙ МЕТОД: Сбор добровольных взносов от жителей
+    collectVoluntaryContributions() {
+        let totalContributions = 0;
+        this.residents.forEach(resident => {
+            // Добровольный взнос 5% если ПП > 300 (излишки)
+            if (resident.pp > 300 && Math.random() < 0.4) {
+                const contribution = resident.pp * 0.05;
+                if (contribution > 0 && resident.pp >= contribution) {
+                    resident.pp -= contribution;
+                    this.publicFunds += contribution;
+                    totalContributions += contribution;
+                }
+            }
+        });
+        if (totalContributions > 0) {
+            console.log(`💰 Добровольные взносы: ${Math.round(totalContributions)} ПП`);
+        }
+        return totalContributions;
+    }
+    
+    // ⭐ НОВЫЙ МЕТОД: Автоматическое обслуживание инфраструктуры
+    performAutomaticMaintenance() {
+        let totalMaintenanceCost = 0;
+        let maintainedCount = 0;
+        
+        this.infrastructure.forEach(infra => {
+            // Авто-ремонт если состояние < 60% и есть деньги
+            const maintenanceCost = infra.getMaintenanceCost();
+            if (infra.condition < 60 && this.publicFunds >= maintenanceCost) {
+                this.publicFunds -= maintenanceCost;
+                infra.condition = Math.min(100, infra.condition + 25);
+                infra.efficiency = Math.min(100, infra.efficiency + 10);
+                totalMaintenanceCost += maintenanceCost;
+                maintainedCount++;
+            }
+        });
+        
+        if (totalMaintenanceCost > 0) {
+            console.log(`🔧 Авто-обслуживание: ${maintainedCount} объектов за ${Math.round(totalMaintenanceCost)} ПП`);
+        }
+        return totalMaintenanceCost;
     }
     
     processAutoInvestments() {
