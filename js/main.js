@@ -289,6 +289,23 @@ function toggleAutoInvest() {
     console.log(`🤖 Авто-инвестиции: ${window.simulation.autoInvestEnabled ? 'Включены' : 'Выключены'}`);
 }
 
+function showFinancialInfo() {
+    if (!window.simulation) return;
+    
+    const stats = window.simulation.getStats();
+    let message = `💰 ФИНАНСОВАЯ ИНФОРМАЦИЯ\n\n`;
+    message += `📊 ТЕКУЩИЙ БАЛАНС: ${Math.round(stats.publicFunds)} ПП\n\n`;
+    message += `📈 ИСТОЧНИКИ ПОПОЛНЕНИЯ:\n`;
+    message += `• Налоги с жителей: ~${stats.totalResidents * 20} ПП/месяц\n`;
+    message += `• Доходы от инвестиций: ${Math.round(stats.monthlyInvestmentIncome)} ПП/месяц\n\n`;
+    message += `📉 РАСХОДЫ:\n`;
+    message += `• Обслуживание инфраструктуры: ~${stats.infrastructureCount * 50} ПП/месяц\n`;
+    message += `• Строительство новых объектов: 500-10000 ПП\n\n`;
+    message += `💡 СОВЕТ: Следите за балансом! При отрицательном балансе инфраструктура разрушается быстрее.`;
+    
+    alert(message);
+}
+
 function startAutoInvestments() {
     if (!window.simulation || !window.simulation.autoInvestEnabled) return;
     

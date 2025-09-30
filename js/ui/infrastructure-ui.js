@@ -55,8 +55,8 @@ function updateInfrastructureList() {
                     <div class="progress-fill" style="width: ${data.efficiency}%"></div>
                 </div>
                 ${specificInfo}
-                <div>🔧 Обслуживание: ${data.maintenanceCost} ПП/месяц</div>
-                <div>⬆️ Улучшение: ${data.upgradeCost} ПП</div>
+                <div>🔧 Обслуживание: ${data.maintenanceCost} ПП/месяц</div>                
+                <div>⬆️ Улучшение: ${data.upgradeCost} ПП (Баланс: ${Math.round(stats.publicFunds)} ПП)</div>
                 <div class="investment-controls">
                     <button onclick="upgradeInfrastructure('${infra.id}')" class="success">⬆️ Улучшить</button>
                     <button onclick="repairInfrastructure('${infra.id}')" class="warning">🔧 Ремонт</button>
@@ -89,14 +89,18 @@ function upgradeInfrastructure(infrastructureId) {
     const stats = window.simulation.getStats();
     
     if (stats.publicFunds >= upgradeCost) {
-        if (infra.upgrade()) {
-            updateUI();
-            alert(`✅ ${infra.config.name} улучшен до уровня ${infra.level}!`);
-        } else {
-            alert('❌ Достигнут максимальный уровень улучшения');
+        try {
+            if (infra.upgrade()) {
+                updateUI();
+                alert(`✅ ${infra.config.name} улучшен до уровня ${infra.level}!`);
+            } else {
+                alert('❌ Достигнут максимальный уровень улучшения');
+            }
+        } catch (error) {
+            alert(`❌ Ошибка улучшения: ${error.message}`);
         }
     } else {
-        alert(`❌ Недостаточно средств. Нужно: ${Math.round(upgradeCost)} ПП`);
+        alert(`❌ Недостаточно средств. Нужно: ${Math.round(upgradeCost)} ПП | Текущий баланс: ${Math.round(stats.publicFunds)} ПП`);
     }
 }
 
