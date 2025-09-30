@@ -20,35 +20,138 @@ const CONFIG = {
         NONE: 0.1
     },
 
-    // Инфраструктура
+    // Инфраструктура - РАСШИРЕННАЯ ВЕРСИЯ
     INFRASTRUCTURE_TYPES: {
+        // Образование
         SCHOOL: { 
             name: 'Школа', 
             cost: 1000, 
             effect: 'education',
             icon: '🏫',
-            description: 'Повышает уровень образования'
+            description: 'Повышает уровень образования',
+            category: 'education'
         },
+        UNIVERSITY: { 
+            name: 'Университет', 
+            cost: 2500, 
+            effect: 'education',
+            icon: '🎓',
+            description: 'Высшее образование и исследования',
+            category: 'education'
+        },
+        
+        // Здравоохранение
         HOSPITAL: { 
             name: 'Больница', 
             cost: 1500, 
             effect: 'healthcare',
             icon: '🏥',
-            description: 'Улучшает здоровье жителей'
+            description: 'Улучшает здоровье жителей',
+            category: 'healthcare'
         },
+        CLINIC: { 
+            name: 'Поликлиника', 
+            cost: 800, 
+            effect: 'healthcare',
+            icon: '🚑',
+            description: 'Базовая медицинская помощь',
+            category: 'healthcare'
+        },
+        
+        // Транспорт
         TRANSPORT: { 
             name: 'Транспорт', 
             cost: 800, 
             effect: 'mobility',
             icon: '🚍',
-            description: 'Повышает мобильность и активность'
+            description: 'Повышает мобильность и активность',
+            category: 'transport'
         },
-        ENERGY: { 
-            name: 'Энергетика', 
+        METRO: { 
+            name: 'Метро', 
+            cost: 3000, 
+            effect: 'mobility',
+            icon: '🚇',
+            description: 'Высокоскоростной транспорт',
+            category: 'transport'
+        },
+        
+        // Энергетика - НОВОЕ
+        SOLAR_PLANT: { 
+            name: 'Солнечная станция', 
             cost: 1200, 
-            effect: 'productivity',
-            icon: '⚡',
-            description: 'Увеличивает продуктивность'
+            effect: 'energy',
+            icon: '☀️',
+            description: 'Чистая энергия от солнца',
+            category: 'energy',
+            energyOutput: 100
+        },
+        WIND_FARM: { 
+            name: 'Ветряная ферма', 
+            cost: 1500, 
+            effect: 'energy',
+            icon: '🌬️',
+            description: 'Энергия ветра',
+            category: 'energy',
+            energyOutput: 120
+        },
+        NUCLEAR_PLANT: { 
+            name: 'АЭС', 
+            cost: 5000, 
+            effect: 'energy',
+            icon: '⚛️',
+            description: 'Высокая мощность, требует контроля',
+            category: 'energy',
+            energyOutput: 500
+        },
+        
+        // Сельское хозяйство - НОВОЕ
+        FARM: { 
+            name: 'Ферма', 
+            cost: 800, 
+            effect: 'food',
+            icon: '🚜',
+            description: 'Традиционное сельское хозяйство',
+            category: 'agriculture',
+            foodOutput: 80
+        },
+        VERTICAL_FARM: { 
+            name: 'Вертикальная ферма', 
+            cost: 2000, 
+            effect: 'food',
+            icon: '🏢',
+            description: 'Эффективное городское земледелие',
+            category: 'agriculture',
+            foodOutput: 150
+        },
+        HYDROPONICS: { 
+            name: 'Гидропоника', 
+            cost: 1200, 
+            effect: 'food',
+            icon: '💧',
+            description: 'Выращивание без почвы',
+            category: 'agriculture',
+            foodOutput: 100
+        },
+        
+        // Промышленность - НОВОЕ
+        FACTORY: { 
+            name: 'Завод', 
+            cost: 2000, 
+            effect: 'production',
+            icon: '🏭',
+            description: 'Промышленное производство',
+            category: 'industry',
+            productionOutput: 100
+        },
+        TECH_PARK: { 
+            name: 'Технопарк', 
+            cost: 3000, 
+            effect: 'innovation',
+            icon: '🔬',
+            description: 'Технологические инновации',
+            category: 'industry',
+            innovationOutput: 150
         }
     },
 

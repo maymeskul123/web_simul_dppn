@@ -155,15 +155,37 @@
             <section class="infrastructure-panel">
                 <h2>🏢 Управление инфраструктурой</h2>
                 <div class="control-group">
-                    <h3>🏗️ Строительство</h3>
-                    <div class="button-group">
-                        <button onclick="buildInfrastructure('SCHOOL')">🏫 Построить школу (1000 ПП)</button>
-                        <button onclick="buildInfrastructure('HOSPITAL')">🏥 Построить больницу (1500 ПП)</button>
-                        <button onclick="buildInfrastructure('TRANSPORT')">🚍 Развить транспорт (800 ПП)</button>
-                        <button onclick="buildInfrastructure('ENERGY')">⚡ Энергетика (1200 ПП)</button>
-                        <button onclick="autoMaintainInfrastructure()" class="warning">🔧 Авто-ремонт</button>
-                    </div>
-                </div>
+    <h3>🏗️ Строительство</h3>
+    <div class="button-group">
+        <!-- Образование -->
+        <button onclick="buildInfrastructure('SCHOOL')">🏫 Школа (1000 ПП)</button>
+        <button onclick="buildInfrastructure('UNIVERSITY')">🎓 Университет (2500 ПП)</button>
+        
+        <!-- Здравоохранение -->
+        <button onclick="buildInfrastructure('HOSPITAL')">🏥 Больница (1500 ПП)</button>
+        <button onclick="buildInfrastructure('CLINIC')">🚑 Поликлиника (800 ПП)</button>
+        
+        <!-- Транспорт -->
+        <button onclick="buildInfrastructure('TRANSPORT')">🚍 Транспорт (800 ПП)</button>
+        <button onclick="buildInfrastructure('METRO')">🚇 Метро (3000 ПП)</button>
+        
+        <!-- Энергетика -->
+        <button onclick="buildInfrastructure('SOLAR_PLANT')">☀️ Солнечная станция (1200 ПП)</button>
+        <button onclick="buildInfrastructure('WIND_FARM')">🌬️ Ветряная ферма (1500 ПП)</button>
+        <button onclick="buildInfrastructure('NUCLEAR_PLANT')">⚛️ АЭС (5000 ПП)</button>
+        
+        <!-- Сельское хозяйство -->
+        <button onclick="buildInfrastructure('FARM')">🚜 Ферма (800 ПП)</button>
+        <button onclick="buildInfrastructure('VERTICAL_FARM')">🏢 Вертикальная ферма (2000 ПП)</button>
+        <button onclick="buildInfrastructure('HYDROPONICS')">💧 Гидропоника (1200 ПП)</button>
+        
+        <!-- Промышленность -->
+        <button onclick="buildInfrastructure('FACTORY')">🏭 Завод (2000 ПП)</button>
+        <button onclick="buildInfrastructure('TECH_PARK')">🔬 Технопарк (3000 ПП)</button>
+        
+        <button onclick="autoMaintainInfrastructure()" class="warning">🔧 Авто-ремонт</button>
+    </div>
+</div>
                 
                 <div class="control-group">
                     <h3>📈 Эффекты инфраструктуры</h3>

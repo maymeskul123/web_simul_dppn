@@ -1,9 +1,9 @@
 // Функции управления инфраструктурой
 function buildInfrastructure(type) {
-    if (!simulation) return;
+    if (!window.simulation) return;
     
     try {
-        const infrastructure = simulation.buildInfrastructure(type);
+        const infrastructure = window.simulation.buildInfrastructure(type);
         updateUI();
         
         const config = CONFIG.INFRASTRUCTURE_TYPES[type];
@@ -16,14 +16,14 @@ function buildInfrastructure(type) {
 }
 
 function autoMaintainInfrastructure() {
-    if (!simulation) return;
+    if (!window.simulation) return;
     
     let maintainedCount = 0;
     let totalCost = 0;
     
-    simulation.infrastructure.forEach(infra => {
-        if (infra.condition < 80 && simulation.publicFunds >= infra.getMaintenanceCost()) {
-            simulation.publicFunds -= infra.getMaintenanceCost();
+    window.simulation.infrastructure.forEach(infra => {
+        if (infra.condition < 80 && window.simulation.publicFunds >= infra.getMaintenanceCost()) {
+            window.simulation.publicFunds -= infra.getMaintenanceCost();
             infra.maintain();
             maintainedCount++;
             totalCost += infra.getMaintenanceCost();
@@ -40,15 +40,15 @@ function autoMaintainInfrastructure() {
 }
 
 function upgradeInfrastructure(infrastructureId) {
-    if (!simulation) return;
+    if (!window.simulation) return;
     
-    const infra = simulation.infrastructure.find(i => i.id === infrastructureId);
+    const infra = window.simulation.infrastructure.find(i => i.id === infrastructureId);
     if (!infra) return;
     
-    const upgradeCost = infra.getMaintenanceCost() * 5; // Стоимость улучшения
+    const upgradeCost = infra.getMaintenanceCost() * 5;
     
-    if (simulation.publicFunds >= upgradeCost) {
-        simulation.publicFunds -= upgradeCost;
+    if (window.simulation.publicFunds >= upgradeCost) {
+        window.simulation.publicFunds -= upgradeCost;
         const success = infra.upgrade();
         
         if (success) {
@@ -60,5 +60,25 @@ function upgradeInfrastructure(infrastructureId) {
         }
     } else {
         alert(`❌ Недостаточно средств для улучшения. Нужно: ${Math.round(upgradeCost)} ПП`);
+    }
+}
+
+function repairInfrastructure(infrastructureId) {
+    if (!window.simulation) return;
+    
+    const infra = window.simulation.infrastructure.find(i => i.id === infrastructureId);
+    if (!infra) return;
+    
+    const repairCost = infra.getMaintenanceCost() * 2;
+    
+    if (window.simulation.publicFunds >= repairCost) {
+        window.simulation.publicFunds -= repairCost;
+        infra.maintain();
+        updateUI();
+        
+        console.log(`🔧 Отремонтирована инфраструктура: ${CONFIG.INFRASTRUCTURE_TYPES[infra.type].name}`);
+        alert(`✅ Инфраструктура отремонтирована за ${Math.round(repairCost)} ПП!`);
+    } else {
+        alert(`❌ Недостаточно средств для ремонта. Нужно: ${Math.round(repairCost)} ПП`);
     }
 }
