@@ -1,0 +1,575 @@
+/* Вкладки */
+.tabs {
+    display: flex;
+    background: white;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+}
+
+.tab {
+    padding: 1rem 2rem;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    flex: 1;
+    text-align: center;
+    font-weight: 500;
+}
+
+.tab:hover {
+    background: var(--light-color);
+}
+
+.tab.active {
+    border-bottom-color: var(--secondary-color);
+    background: var(--light-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Панели */
+.control-panel, .stats-panel, .residents-panel, 
+.infrastructure-panel, .investments-panel {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 2rem;
+}
+
+.control-group {
+    margin-bottom: 1.5rem;
+}
+
+.control-group h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--light-color);
+    padding-bottom: 0.5rem;
+}
+
+/* Кнопки и инпуты */
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+button {
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+button:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button.danger { background: var(--accent-color); }
+button.danger:hover { background: #c0392b; }
+
+button.success { background: var(--success-color); }
+button.success:hover { background: #219652; }
+
+button.warning { background: var(--warning-color); }
+button.warning:hover { background: #e67e22; }
+
+button.info { background: var(--info-color); }
+button.info:hover { background: #8e44ad; }
+
+input, select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    min-width: 120px;
+    transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Статистика */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 1rem;
+}
+
+.stat-card {
+    background: var(--light-color);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--secondary-color);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card.infrastructure {
+    border-left-color: var(--info-color);
+}
+
+.stat-card.investments {
+    border-left-color: var(--warning-color);
+}
+
+.stat-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 0.5rem;
+}
+
+.stat-item {
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.stat-item span {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+/* Прогресс-бары */
+.progress-bar {
+    height: 8px;
+    background: #ddd;
+    border-radius: 4px;
+    margin: 5px 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--success-color);
+    transition: width 0.3s ease;
+}
+
+/* Карточки */
+.residents-grid, .infrastructure-grid, .investments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.resident-card, .infrastructure-card, .investment-card {
+    background: var(--light-color);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+.resident-card:hover, .infrastructure-card:hover, .investment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.card-title {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.pp-value {
+    background: var(--success-color);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.level-badge {
+    background: var(--info-color);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+/* Коэффициенты */
+.coefficients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.coef-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.coef-item label {
+    font-size: 0.8rem;
+    color: var(--dark-color);
+    font-weight: 500;
+}
+
+/* Элементы управления жителями */
+.residents-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.investment-controls {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.investment-controls button {
+    flex: 1;
+    padding: 5px 8px;
+    font-size: 0.8rem;
+}
+
+/* Информационные блоки */
+.resident-info {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9rem;
+    color: var(--dark-color);
+}
+
+.resident-info strong {
+    color: var(--primary-color);
+}/* Вкладки */
+.tabs {
+    display: flex;
+    background: white;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+}
+
+.tab {
+    padding: 1rem 2rem;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    flex: 1;
+    text-align: center;
+    font-weight: 500;
+}
+
+.tab:hover {
+    background: var(--light-color);
+}
+
+.tab.active {
+    border-bottom-color: var(--secondary-color);
+    background: var(--light-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Панели */
+.control-panel, .stats-panel, .residents-panel, 
+.infrastructure-panel, .investments-panel {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 2rem;
+}
+
+.control-group {
+    margin-bottom: 1.5rem;
+}
+
+.control-group h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--light-color);
+    padding-bottom: 0.5rem;
+}
+
+/* Кнопки и инпуты */
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+button {
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+button:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button.danger { background: var(--accent-color); }
+button.danger:hover { background: #c0392b; }
+
+button.success { background: var(--success-color); }
+button.success:hover { background: #219652; }
+
+button.warning { background: var(--warning-color); }
+button.warning:hover { background: #e67e22; }
+
+button.info { background: var(--info-color); }
+button.info:hover { background: #8e44ad; }
+
+input, select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    min-width: 120px;
+    transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Статистика */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 1rem;
+}
+
+.stat-card {
+    background: var(--light-color);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--secondary-color);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card.infrastructure {
+    border-left-color: var(--info-color);
+}
+
+.stat-card.investments {
+    border-left-color: var(--warning-color);
+}
+
+.stat-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 0.5rem;
+}
+
+.stat-item {
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.stat-item span {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+/* Прогресс-бары */
+.progress-bar {
+    height: 8px;
+    background: #ddd;
+    border-radius: 4px;
+    margin: 5px 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--success-color);
+    transition: width 0.3s ease;
+}
+
+/* Карточки */
+.residents-grid, .infrastructure-grid, .investments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.resident-card, .infrastructure-card, .investment-card {
+    background: var(--light-color);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+.resident-card:hover, .infrastructure-card:hover, .investment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.card-title {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.pp-value {
+    background: var(--success-color);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.level-badge {
+    background: var(--info-color);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+/* Коэффициенты */
+.coefficients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.coef-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.coef-item label {
+    font-size: 0.8rem;
+    color: var(--dark-color);
+    font-weight: 500;
+}
+
+/* Элементы управления жителями */
+.residents-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.investment-controls {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.investment-controls button {
+    flex: 1;
+    padding: 5px 8px;
+    font-size: 0.8rem;
+}
+
+/* Информационные блоки */
+.resident-info {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9rem;
+    color: var(--dark-color);
+}
+
+.resident-info strong {
+    color: var(--primary-color);
+}

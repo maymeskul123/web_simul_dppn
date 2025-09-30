@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DPPN Расширенный Симулятор</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ DPPN Расширенный Симулятор</h1>
+            <p>Децентрализованная сеть личных возможностей с инфраструктурой и инвестициями</p>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('control')">🎮 Управление</div>
+            <div class="tab" onclick="switchTab('residents')">👥 Жители</div>
+            <div class="tab" onclick="switchTab('infrastructure')">🏢 Инфраструктура</div>
+            <div class="tab" onclick="switchTab('investments')">💼 Инвестиции</div>
+            <div class="tab" onclick="switchTab('analytics')">📊 Аналитика</div>
+        </div>
+
+        <!-- Вкладка управления -->
+        <div id="control" class="tab-content active">
+            <section class="control-panel">
+                <div class="control-group">
+                    <h3>👥 Управление населением</h3>
+                    <div class="input-group">
+                        <input type="number" id="residentCount" min="1" max="100" value="5">
+                        <button onclick="addResidents()">➕ Добавить жителей</button>
+                        <button onclick="removeResidents()">➖ Удалить жителей</button>
+                    </div>
+                    <div class="resident-info">
+                        <span>Текущее количество: <strong id="currentResidents">0</strong></span>
+                        <span style="margin-left: 15px;">Лимит: 1-100 жителей</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>🎮 Управление симуляцией</h3>
+                    <div class="button-group">
+                        <button onclick="simulateMonth()">📅 Симулировать месяц</button>
+                        <button onclick="autoConvert()">🔄 Авто-конвертация</button>
+                        <button onclick="startAutoSimulation()">▶️ Авто-симуляция</button>
+                        <button onclick="stopAutoSimulation()">⏹️ Стоп</button>
+                        <button onclick="resetSimulation()" class="danger">🗑️ Сбросить всё</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>🤖 Автоматические инвестиции</h3>
+                    <div class="button-group">
+                        <button onclick="toggleAutoInvest()" id="autoInvestBtn">🚫 Авто-инвестиции: Выкл</button>
+                        <select id="investmentStrategy" onchange="changeInvestmentStrategy()">
+                            <option value="conservative">Консервативная</option>
+                            <option value="balanced" selected>Сбалансированная</option>
+                            <option value="aggressive">Агрессивная</option>
+                        </select>
+                        <button onclick="createSmartProject()" class="info">🎯 Создать умный проект</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>⚙️ Настройка коэффициентов</h3>
+                    <div class="coefficients-grid">
+                        <div class="coef-item">
+                            <label>Базовый ПП/месяц:</label>
+                            <input type="number" id="basePP" value="100" min="0" max="1000">
+                        </div>
+                        <div class="coef-item">
+                            <label>Бонус волонтерства:</label>
+                            <input type="number" id="volunteerBonus" value="50" min="0" max="500">
+                        </div>
+                        <div class="coef-item">
+                            <label>Бонус образования:</label>
+                            <input type="number" id="educationBonus" value="30" min="0" max="500">
+                        </div>
+                        <div class="coef-item">
+                            <label>Лимит денег (%):</label>
+                            <input type="number" id="moneyLimit" value="30" min="0" max="100">
+                        </div>
+                    </div>
+                    <button onclick="updateCoefficients()">💾 Применить коэффициенты</button>
+                </div>
+            </section>
+
+            <section class="stats-panel">
+                <h2>📊 Общая статистика системы</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>📈 Основные показатели</h3>
+                        <div class="stat-item">Месяц: <span id="statMonth">0</span></div>
+                        <div class="stat-item">Жителей: <span id="statResidents">0</span></div>
+                        <div class="stat-item">Общий ПП: <span id="statTotalPP">0</span></div>
+                        <div class="stat-item">Средний ПП: <span id="statAvgPP">0</span></div>
+                        <div class="stat-item">Общественные фонды: <span id="statPublicFunds">0</span> ПП</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>💸 Конвертации</h3>
+                        <div class="stat-item">В деньги: <span id="statMoney">0</span></div>
+                        <div class="stat-item">В голоса: <span id="statVotes">0</span></div>
+                        <div class="stat-item">В социальные: <span id="statSocial">0</span></div>
+                        <div class="stat-item">Всего инвестировано: <span id="statTotalInvested">0</span></div>
+                        <div class="stat-item">Авто-инвестиции: <span id="statAutoInvestments">0</span></div>
+                    </div>
+                    <div class="stat-card infrastructure">
+                        <h3>🏢 Инфраструктура</h3>
+                        <div class="stat-item">Объектов: <span id="statInfrastructure">0</span></div>
+                        <div class="stat-item">Уровень развития: <span id="statInfraLevel">0</span></div>
+                        <div class="stat-item">Эффективность: <span id="statInfraEfficiency">0</span>%</div>
+                        <div class="stat-item">Образование: <span id="statEducation">0</span>/100</div>
+                        <div class="stat-item">Здравоохранение: <span id="statHealthcare">0</span>/100</div>
+                    </div>
+                    <div class="stat-card investments">
+                        <h3>💼 Инвестиции</h3>
+                        <div class="stat-item">Активных проектов: <span id="statActiveInvestments">0</span></div>
+                        <div class="stat-item">Завершенных проектов: <span id="statCompletedInvestments">0</span></div>
+                        <div class="stat-item">Общий объем: <span id="statTotalInvestment">0</span></div>
+                        <div class="stat-item">Ежемесячный доход: <span id="statInvestmentReturn">0</span></div>
+                        <div class="stat-item">Стратегия: <span id="statInvestmentStrategy">Сбалансированная</span></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Вкладка жителей -->
+        <div id="residents" class="tab-content">
+            <section class="residents-panel">
+                <h2>👤 Жители системы</h2>
+                <div class="residents-controls">
+                    <input type="text" id="searchResident" placeholder="🔍 Поиск жителя..." onkeyup="searchResidents()">
+                    <select id="sortResidents" onchange="sortResidents()">
+                        <option value="name">По имени</option>
+                        <option value="pp">По ПП</option>
+                        <option value="satisfaction">По удовлетворенности</option>
+                        <option value="health">По здоровью</option>
+                        <option value="education">По образованию</option>
+                        <option value="invested">По инвестициям</option>
+                    </select>
+                    <button onclick="exportResidentsData()" class="info">📊 Экспорт данных</button>
+                </div>
+                <div class="residents-grid" id="residentsContainer">
+                    <!-- Жители будут здесь -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Вкладка инфраструктуры -->
+        <div id="infrastructure" class="tab-content">
+            <section class="infrastructure-panel">
+                <h2>🏢 Управление инфраструктурой</h2>
+                <div class="control-group">
+                    <h3>🏗️ Строительство</h3>
+                    <div class="button-group">
+                        <button onclick="buildInfrastructure('SCHOOL')">🏫 Построить школу (1000 ПП)</button>
+                        <button onclick="buildInfrastructure('HOSPITAL')">🏥 Построить больницу (1500 ПП)</button>
+                        <button onclick="buildInfrastructure('TRANSPORT')">🚍 Развить транспорт (800 ПП)</button>
+                        <button onclick="buildInfrastructure('ENERGY')">⚡ Энергетика (1200 ПП)</button>
+                        <button onclick="autoMaintainInfrastructure()" class="warning">🔧 Авто-ремонт</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3>📈 Эффекты инфраструктуры</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>🎓 Образование</h3>
+                            <div class="stat-item">Уровень: <span id="infraEducationLevel">0</span></div>
+                            <div class="stat-item">Школы: <span id="infraSchoolsCount">0</span></div>
+                            <div class="stat-item">Бонус к ПП: <span id="infraEducationBonus">0</span>%</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>🏥 Здравоохранение</h3>
+                            <div class="stat-item">Уровень: <span id="infraHealthLevel">0</span></div>
+                            <div class="stat-item">Больницы: <span id="infraHospitalsCount">0</span></div>
+                            <div class="stat-item">Бонус к здоровью: <span id="infraHealthBonus">0</span>%</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>🚍 Транспорт</h3>
+                            <div class="stat-item">Уровень: <span id="infraTransportLevel">0</span></div>
+                            <div class="stat-item">Проекты: <span id="infraTransportCount">0</span></div>
+                            <div class="stat-item">Бонус к активности: <span id="infraTransportBonus">0</span>%</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>⚡ Энергетика</h3>
+                            <div class="stat-item">Уровень: <span id="infraEnergyLevel">0</span></div>
+                            <div class="stat-item">Станции: <span id="infraEnergyCount">0</span></div>
+                            <div class="stat-item">Бонус к продуктивности: <span id="infraEnergyBonus">0</span>%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="infrastructure-grid" id="infrastructureContainer">
+                    <!-- Объекты инфраструктуры будут здесь -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Вкладка инвестиций -->
+        <div id="investments" class="tab-content">
+            <section class="investments-panel">
+                <h2>💼 Инвестиционные проекты</h2>
+                
+                <div class="control-group">
+                    <h3>🆕 Создание проектов</h3>
+                    <div class="button-group">
+                        <button onclick="createInvestment('BUSINESS')">💼 Бизнес-проект (500 ПП)</button>
+                        <button onclick="createInvestment('EDUCATION')">🎓 Образовательный (300 ПП)</button>
+                        <button onclick="createInvestment('HEALTHCARE')">🏥 Медицинский (400 ПП)</button>
+                        <button onclick="createInvestment('TECHNOLOGY')">🔬 Технологический (600 ПП)</button>
+                        <button onclick="analyzeInvestmentNeeds()" class="info">📈 Анализ потребностей</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>📊 Статистика инвестиций</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>💼 Портфель</h3>
+                            <div class="stat-item">Всего проектов: <span id="investTotalProjects">0</span></div>
+                            <div class="stat-item">Активных: <span id="investActiveProjects">0</span></div>
+                            <div class="stat-item">Завершенных: <span id="investCompletedProjects">0</span></div>
+                            <div class="stat-item">Успешных: <span id="investSuccessfulProjects">0</span></div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>💰 Финансы</h3>
+                            <div class="stat-item">Общие инвестиции: <span id="investTotalAmount">0</span> ПП</div>
+                            <div class="stat-item">Текущая доходность: <span id="investCurrentReturn">0</span>%</div>
+                            <div class="stat-item">Месячный доход: <span id="investMonthlyIncome">0</span> ПП</div>
+                            <div class="stat-item">Общий доход: <span id="investTotalIncome">0</span> ПП</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>🎯 Распределение</h3>
+                            <div class="stat-item">Бизнес: <span id="investBusiness">0</span>%</div>
+                            <div class="stat-item">Образование: <span id="investEducation">0</span>%</div>
+                            <div class="stat-item">Здравоохранение: <span id="investHealthcare">0</span>%</div>
+                            <div class="stat-item">Технологии: <span id="investTechnology">0</span>%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="investments-grid" id="investmentsContainer">
+                    <!-- Инвестиционные проекты будут здесь -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Вкладка аналитики -->
+        <div id="analytics" class="tab-content">
+            <section class="stats-panel">
+                <h2>📈 Аналитика развития системы DPPN</h2>
+                
+                <div class="control-group">
+                    <h3>🔍 Быстрый анализ</h3>
+                    <div class="button-group">
+                        <button onclick="generateEconomicReport()" class="info">📊 Экономический отчёт</button>
+                        <button onclick="generateSocialReport()" class="success">👥 Социальный отчёт</button>
+                        <button onclick="generateInfrastructureReport()" class="warning">🏢 Инфраструктурный отчёт</button>
+                        <button onclick="generateInvestmentReport()" class="info">💼 Инвестиционный отчёт</button>
+                        <button onclick="exportAllData()" class="success">💾 Экспорт всех данных</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>📈 Экономические показатели</h3>
+                        <div class="stat-item">ВВП системы: <span id="analyticsGDP">0</span> ПП</div>
+                        <div class="stat-item">Рост экономики: <span id="analyticsGrowth">0</span>%</div>
+                        <div class="stat-item">Инфляция: <span id="analyticsInflation">0</span>%</div>
+                        <div class="stat-item">Уровень безработицы: <span id="analyticsUnemployment">0</span>%</div>
+                        <div class="stat-item">Производительность: <span id="analyticsProductivity">0</span>/100</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>🏥 Социальные показатели</h3>
+                        <div class="stat-item">Качество жизни: <span id="analyticsQualityOfLife">0</span>/100</div>
+                        <div class="stat-item">Удовлетворенность: <span id="analyticsSatisfaction">0</span>/100</div>
+                        <div class="stat-item">Образование: <span id="analyticsEducation">0</span>/100</div>
+                        <div class="stat-item">Здравоохранение: <span id="analyticsHealthcare">0</span>/100</div>
+                        <div class="stat-item">Социальная мобильность: <span id="analyticsMobility">0</span>/100</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>🔬 Технологические показатели</h3>
+                        <div class="stat-item">Уровень инноваций: <span id="analyticsInnovation">0</span>/100</div>
+                        <div class="stat-item">Технологическое развитие: <span id="analyticsTechDevelopment">0</span>/100</div>
+                        <div class="stat-item">Инфраструктурный индекс: <span id="analyticsInfrastructureIndex">0</span>/100</div>
+                        <div class="stat-item">Цифровизация: <span id="analyticsDigitalization">0</span>/100</div>
+                        <div class="stat-item">Исследования: <span id="analyticsResearch">0</span>/100</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>📊 Тенденции и прогнозы</h3>
+                        <div class="stat-item">Стабильность системы: <span id="analyticsStability">0</span>/100</div>
+                        <div class="stat-item">Устойчивость роста: <span id="analyticsSustainability">0</span>/100</div>
+                        <div class="stat-item">Прогноз на 6 месяцев: <span id="analyticsForecast">0</span>%</div>
+                        <div class="stat-item">Риски системы: <span id="analyticsRisks">0</span>/100</div>
+                        <div class="stat-item">Эффективность DPPN: <span id="analyticsEfficiency">0</span>/100</div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>📈 Исторические данные</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>📅 Последние 6 месяцев</h3>
+                            <div id="historyChart">
+                                <!-- Здесь будет график -->
+                                <p style="text-align: center; color: #666; padding: 2rem;">
+                                    График развития будет отображаться здесь после сбора данных
+                                </p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>🎯 Ключевые метрики</h3>
+                            <div class="stat-item">Средний рост ПП: <span id="metricAvgPPGrowth">0</span>%</div>
+                            <div class="stat-item">Эффективность инвестиций: <span id="metricInvestmentEfficiency">0</span>%</div>
+                            <div class="stat-item">Окупаемость инфраструктуры: <span id="metricInfraROI">0</span> месяцев</div>
+                            <div class="stat-item">Социальный капитал: <span id="metricSocialCapital">0</span>/100</div>
+                            <div class="stat-item">Индекс развития: <span id="metricDevelopmentIndex">0</span>/100</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/config.js"></script>
+    
+    <!-- Классы -->
+    <script src="js/classes/Resident.js"></script>
+    <script src="js/classes/Infrastructure.js"></script>
+    <script src="js/classes/Investment.js"></script>
+    <script src="js/classes/Simulation.js"></script>
+    
+    <!-- Основная логика -->
+    <script src="js/core/simulation.js"></script>
+    <script src="js/core/investments.js"></script>
+    <script src="js/core/infrastructure.js"></script>
+    
+    <!-- Интерфейс -->
+    <script src="js/ui/tabs.js"></script>
+    <script src="js/ui/residents-ui.js"></script>
+    <script src="js/ui/infrastructure-ui.js"></script>
+    <script src="js/ui/investments-ui.js"></script>
+    <script src="js/ui/analytics-ui.js"></script>
+    
+    <!-- Главный файл -->
+    <script src="js/main.js"></script>
+</body>
+</html>
