@@ -155,36 +155,96 @@
             <section class="infrastructure-panel">
                 <h2>🏢 Управление инфраструктурой</h2>
                 <div class="control-group">
+<div class="control-group">
     <h3>🏗️ Строительство</h3>
-    <div class="button-group">
-        <!-- Образование -->
-        <button onclick="buildInfrastructure('SCHOOL')">🏫 Школа (1000 ПП)</button>
-        <button onclick="buildInfrastructure('UNIVERSITY')">🎓 Университет (2500 ПП)</button>
-        
+    <div class="construction-categories">
+        <!-- Образование и наука -->
+        <div class="category-group">
+            <h4>🎓 Образование</h4>
+            <button onclick="buildInfrastructure('SCHOOL')">🏫 Школа (1000 ПП)</button>
+            <button onclick="buildInfrastructure('UNIVERSITY')">🎓 Университет (2500 ПП)</button>
+            <button onclick="buildInfrastructure('RESEARCH_LAB')">🔬 Лаборатория (3000 ПП)</button>
+            <button onclick="buildInfrastructure('TECH_CAMPUS')">💻 Технокампус (4000 ПП)</button>
+            <button onclick="buildInfrastructure('SCIENCE_CENTER')">🧪 Научный центр (5000 ПП)</button>
+        </div>
+
         <!-- Здравоохранение -->
-        <button onclick="buildInfrastructure('HOSPITAL')">🏥 Больница (1500 ПП)</button>
-        <button onclick="buildInfrastructure('CLINIC')">🚑 Поликлиника (800 ПП)</button>
-        
-        <!-- Транспорт -->
-        <button onclick="buildInfrastructure('TRANSPORT')">🚍 Транспорт (800 ПП)</button>
-        <button onclick="buildInfrastructure('METRO')">🚇 Метро (3000 ПП)</button>
-        
+        <div class="category-group">
+            <h4>🏥 Здравоохранение</h4>
+            <button onclick="buildInfrastructure('CLINIC')">🚑 Поликлиника (800 ПП)</button>
+            <button onclick="buildInfrastructure('HOSPITAL')">🏥 Больница (1500 ПП)</button>
+            <button onclick="buildInfrastructure('MEDICAL_RESEARCH')">🧬 Медцентр (3500 ПП)</button>
+        </div>
+
+        <!-- Транспорт и логистика -->
+        <div class="category-group">
+            <h4>🚚 Логистика</h4>
+            <button onclick="buildInfrastructure('TRANSPORT')">🚍 Трансузел (800 ПП)</button>
+            <button onclick="buildInfrastructure('METRO')">🚇 Метро (3000 ПП)</button>
+            <button onclick="buildInfrastructure('LOGISTICS_CENTER')">📦 Логистика (2000 ПП)</button>
+            <button onclick="buildInfrastructure('PORT')">⚓ Порт (4000 ПП)</button>
+            <button onclick="buildInfrastructure('AIRPORT')">✈️ Аэропорт (5000 ПП)</button>
+        </div>
+
         <!-- Энергетика -->
-        <button onclick="buildInfrastructure('SOLAR_PLANT')">☀️ Солнечная станция (1200 ПП)</button>
-        <button onclick="buildInfrastructure('WIND_FARM')">🌬️ Ветряная ферма (1500 ПП)</button>
-        <button onclick="buildInfrastructure('NUCLEAR_PLANT')">⚛️ АЭС (5000 ПП)</button>
-        
+        <div class="category-group">
+            <h4>⚡ Энергетика</h4>
+            <button onclick="buildInfrastructure('SOLAR_PLANT')">☀️ Солнечная (1200 ПП)</button>
+            <button onclick="buildInfrastructure('WIND_FARM')">🌬️ Ветряная (1500 ПП)</button>
+            <button onclick="buildInfrastructure('HYDRO_PLANT')">💧 ГЭС (2000 ПП)</button>
+            <button onclick="buildInfrastructure('NUCLEAR_PLANT')">⚛️ АЭС (5000 ПП)</button>
+            <button onclick="buildInfrastructure('FUSION_PLANT')">🌟 Термояд (10000 ПП)</button>
+        </div>
+
         <!-- Сельское хозяйство -->
-        <button onclick="buildInfrastructure('FARM')">🚜 Ферма (800 ПП)</button>
-        <button onclick="buildInfrastructure('VERTICAL_FARM')">🏢 Вертикальная ферма (2000 ПП)</button>
-        <button onclick="buildInfrastructure('HYDROPONICS')">💧 Гидропоника (1200 ПП)</button>
-        
+        <div class="category-group">
+            <h4>🌾 Сельское хозяйство</h4>
+            <button onclick="buildInfrastructure('FARM')">🚜 Ферма (800 ПП)</button>
+            <button onclick="buildInfrastructure('VERTICAL_FARM')">🏢 Вертикальная (2000 ПП)</button>
+            <button onclick="buildInfrastructure('HYDROPONICS')">💧 Гидропоника (1200 ПП)</button>
+            <button onclick="buildInfrastructure('AQUAPONICS')">🐟 Аквапоника (1800 ПП)</button>
+        </div>
+
         <!-- Промышленность -->
-        <button onclick="buildInfrastructure('FACTORY')">🏭 Завод (2000 ПП)</button>
-        <button onclick="buildInfrastructure('TECH_PARK')">🔬 Технопарк (3000 ПП)</button>
-        
-        <button onclick="autoMaintainInfrastructure()" class="warning">🔧 Авто-ремонт</button>
+        <div class="category-group">
+            <h4>🏭 Промышленность</h4>
+            <button onclick="buildInfrastructure('FACTORY')">🏭 Завод (2000 ПП)</button>
+            <button onclick="buildInfrastructure('TECH_PARK')">🔬 Технопарк (3000 ПП)</button>
+            <button onclick="buildInfrastructure('ROBOTICS_FACTORY')">🤖 Робозавод (4000 ПП)</button>
+            <button onclick="buildInfrastructure('NANOTECH_LAB')">🔍 Нанотехнологии (6000 ПП)</button>
+        </div>
+
+        <!-- Торговля -->
+        <div class="category-group">
+            <h4>💰 Торговля</h4>
+            <button onclick="buildInfrastructure('MARKET')">🛒 Рынок (600 ПП)</button>
+            <button onclick="buildInfrastructure('SHOPPING_MALL')">🏬 Торговый центр (1500 ПП)</button>
+            <button onclick="buildInfrastructure('BUSINESS_CENTER')">💼 Бизнес-центр (2500 ПП)</button>
+            <button onclick="buildInfrastructure('STOCK_EXCHANGE')">📈 Биржа (4000 ПП)</button>
+        </div>
+
+        <!-- Коммунальные услуги -->
+        <div class="category-group">
+            <h4>⚙️ Коммунальные</h4>
+            <button onclick="buildInfrastructure('WATER_PLANT')">💧 Водоочистка (1200 ПП)</button>
+            <button onclick="buildInfrastructure('WASTE_MANAGEMENT')">🗑️ Переработка (1000 ПП)</button>
+            <button onclick="buildInfrastructure('COMMUNICATION_TOWER')">📡 Связь (800 ПП)</button>
+            <button onclick="buildInfrastructure('SMART_GRID')">🔋 Умная сеть (3000 ПП)</button>
+        </div>
+
+        <!-- Культура -->
+        <div class="category-group">
+            <h4>🎭 Культура</h4>
+            <button onclick="buildInfrastructure('PARK')">🌳 Парк (500 ПП)</button>
+            <button onclick="buildInfrastructure('THEATER')">🎭 Театр (1200 ПП)</button>
+            <button onclick="buildInfrastructure('SPORTS_COMPLEX')">⚽ Спорткомплекс (1500 ПП)</button>
+            <button onclick="buildInfrastructure('MUSEUM')">🖼️ Музей (1000 ПП)</button>
+        </div>
     </div>
+    
+    <button onclick="autoMaintainInfrastructure()" class="warning">🔧 Авто-ремонт всех объектов</button>
+    <button onclick="showInfrastructureCosts()" class="info">💰 Информация о стоимости</button>
+</div>
 </div>
                 
                 <div class="control-group">
@@ -230,13 +290,51 @@
                 
                 <div class="control-group">
                     <h3>🆕 Создание проектов</h3>
-                    <div class="button-group">
-                        <button onclick="createInvestment('BUSINESS')">💼 Бизнес-проект (500 ПП)</button>
-                        <button onclick="createInvestment('EDUCATION')">🎓 Образовательный (300 ПП)</button>
-                        <button onclick="createInvestment('HEALTHCARE')">🏥 Медицинский (400 ПП)</button>
-                        <button onclick="createInvestment('TECHNOLOGY')">🔬 Технологический (600 ПП)</button>
-                        <button onclick="analyzeInvestmentNeeds()" class="info">📈 Анализ потребностей</button>
+                    <div class="investment-categories">
+                        <!-- Бизнес -->
+                        <div class="category-group">
+                            <h4>💼 Бизнес</h4>
+                            <button onclick="createInvestment('RETAIL_BUSINESS')">🛍️ Розница (400 ПП)</button>
+                            <button onclick="createInvestment('FOOD_INDUSTRY')">🍕 Пищепром (600 ПП)</button>
+                            <button onclick="createInvestment('REAL_ESTATE')">🏠 Недвижимость (800 ПП)</button>
+                        </div>
+
+                        <!-- Технологии -->
+                        <div class="category-group">
+                            <h4>🔬 Технологии</h4>
+                            <button onclick="createInvestment('SOFTWARE_DEV')">💻 ПО (500 ПП)</button>
+                            <button onclick="createInvestment('AI_RESEARCH')">🧠 ИИ (900 ПП)</button>
+                            <button onclick="createInvestment('BLOCKCHAIN')">⛓️ Блокчейн (700 ПП)</button>
+                            <button onclick="createInvestment('IOT')">📱 IoT (600 ПП)</button>
+                        </div>
+
+                        <!-- Биотех -->
+                        <div class="category-group">
+                            <h4>🧬 Биотехнологии</h4>
+                            <button onclick="createInvestment('BIOTECH')">🧬 Биотех (700 ПП)</button>
+                            <button onclick="createInvestment('PHARMACEUTICAL')">💊 Фармацевтика (1000 ПП)</button>
+                            <button onclick="createInvestment('MEDICAL_TECH')">🩺 Медоборудование (800 ПП)</button>
+                        </div>
+
+                        <!-- Энергетика -->
+                        <div class="category-group">
+                            <h4>⚡ Энергетика</h4>
+                            <button onclick="createInvestment('RENEWABLE_ENERGY')">🌞 ВИЭ (500 ПП)</button>
+                            <button onclick="createInvestment('ENERGY_STORAGE')">🔋 Накопители (600 ПП)</button>
+                            <button onclick="createInvestment('GREEN_TECH')">🌱 Зеленые техно (400 ПП)</button>
+                        </div>
+
+                        <!-- Космос и инновации -->
+                        <div class="category-group">
+                            <h4>🚀 Инновации</h4>
+                            <button onclick="createInvestment('SPACE_TECH')">🚀 Космос (1200 ПП)</button>
+                            <button onclick="createInvestment('SATELLITE_TECH')">🛰️ Спутники (900 ПП)</button>
+                            <button onclick="createInvestment('QUANTUM_COMPUTING')">⚛️ Кванты (1500 ПП)</button>
+                        </div>
                     </div>
+                    
+                    <button onclick="analyzeInvestmentNeeds()" class="info">📈 Анализ потребностей</button>
+                    <button onclick="createSmartProject()" class="success">🎯 Создать умный проект</button>
                 </div>
 
                 <div class="control-group">

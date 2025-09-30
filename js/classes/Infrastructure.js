@@ -16,13 +16,15 @@ class Infrastructure {
         this.foodOutput = this.config.foodOutput || 0;
         this.productionOutput = this.config.productionOutput || 0;
         this.innovationOutput = this.config.innovationOutput || 0;
+        this.commerceOutput = this.config.commerceOutput || 0;
+        this.logisticsOutput = this.config.logisticsOutput || 0;
     }
 
     upgrade() {
         if (this.level < 5) {
             const upgradeCost = this.getUpgradeCost();
             
-            if (window.simulation.publicFunds >= upgradeCost) {
+            if (window.simulation && window.simulation.publicFunds >= upgradeCost) {
                 window.simulation.publicFunds -= upgradeCost;
                 this.level++;
                 this.efficiency = Math.min(100, this.efficiency + 10);
@@ -32,11 +34,31 @@ class Infrastructure {
                 this.foodOutput *= 1.2;
                 this.productionOutput *= 1.2;
                 this.innovationOutput *= 1.2;
+                this.commerceOutput *= 1.2;
+                this.logisticsOutput *= 1.2;
                 
+                console.log(`✅ Улучшен ${this.config.name} до уровня ${this.level}`);
                 return true;
             } else {
-                throw new Error(`Недостаточно средств для улучшения. Нужно: ${upgradeCost} ПП`);
+                throw new Error(`Недостаточно средств для улучшения. Нужно: ${Math.round(upgradeCost)} ПП`);
             }
+        }
+        return false;
+    }
+
+    getUpgradeCost() {
+        return this.config.cost * (this.level * 0.5);
+    }
+
+    maintain() {
+        const maintenanceCost = this.getMaintenanceCost();
+        
+        if (window.simulation && window.simulation.publicFunds >= maintenanceCost) {
+            window.simulation.publicFunds -= maintenanceCost;
+            this.condition = Math.min(100, this.condition + 30);
+            this.efficiency = Math.min(100, this.efficiency + 15);
+            this.lastMaintenance = window.simulation.month;
+            return true;
         }
         return false;
     }

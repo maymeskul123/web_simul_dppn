@@ -1,79 +1,72 @@
-// UI для аналитики
+// analytics-ui.js - UI для аналитики
 function updateAnalytics() {
-    if (!simulation) return;
+    if (!window.simulation) return;
     
-    const stats = simulation.getStats();
-    const history = simulation.history;
-    
-    // Расчет аналитических показателей
-    const gdp = stats.totalPP + stats.totalInvestment;
-    const qualityOfLife = calculateQualityOfLife(stats);
-    const growth = calculateGrowthRate(history);
-    const innovation = calculateInnovationIndex(stats);
-    const stability = calculateStabilityIndex(history);
+    const stats = window.simulation.getStats();
+    const history = window.simulation.history;
     
     // Экономические показатели
-    document.getElementById('analyticsGDP').textContent = Math.round(gdp);
-    document.getElementById('analyticsGrowth').textContent = Math.round(growth);
-    document.getElementById('analyticsInflation').textContent = Math.round(growth * 0.3); // Упрощенный расчет
-    document.getElementById('analyticsUnemployment').textContent = Math.round(100 - stats.averageSatisfaction);
+    document.getElementById('analyticsGDP').textContent = Math.round(stats.totalPP);
+    document.getElementById('analyticsGrowth').textContent = history.length > 1 ? 
+        Math.round(((history[history.length-1].totalPP - history[0].totalPP) / history[0].totalPP) * 100) : 0;
+    document.getElementById('analyticsInflation').textContent = Math.round(stats.month * 0.5);
+    document.getElementById('analyticsUnemployment').textContent = Math.max(0, 100 - (stats.averageSatisfaction || 50));
     document.getElementById('analyticsProductivity').textContent = Math.round((stats.averagePP / 100) * 100);
     
     // Социальные показатели
-    document.getElementById('analyticsQualityOfLife').textContent = Math.round(qualityOfLife);
+    document.getElementById('analyticsQualityOfLife').textContent = Math.round(calculateQualityOfLife(stats));
     document.getElementById('analyticsSatisfaction').textContent = Math.round(stats.averageSatisfaction);
-    document.getElementById('analyticsEducation').textContent = Math.round(stats.infrastructureLevels.education || 0);
-    document.getElementById('analyticsHealthcare').textContent = Math.round(stats.infrastructureLevels.healthcare || 0);
-    document.getElementById('analyticsMobility').textContent = Math.round(stats.infrastructureLevels.mobility || 0);
+    document.getElementById('analyticsEducation').textContent = Math.round(stats.infrastructureLevels?.education || 0);
+    document.getElementById('analyticsHealthcare').textContent = Math.round(stats.infrastructureLevels?.healthcare || 0);
+    document.getElementById('analyticsMobility').textContent = Math.round(stats.infrastructureLevels?.mobility || 0);
     
     // Технологические показатели
-    document.getElementById('analyticsInnovation').textContent = Math.round(innovation);
-    document.getElementById('analyticsTechDevelopment').textContent = Math.round(innovation * 0.8);
+    document.getElementById('analyticsInnovation').textContent = Math.round(calculateInnovationIndex(stats));
+    document.getElementById('analyticsTechDevelopment').textContent = Math.round((stats.infrastructureCount / 10) * 100);
     document.getElementById('analyticsInfrastructureIndex').textContent = Math.round(stats.infrastructureEfficiency);
     document.getElementById('analyticsDigitalization').textContent = Math.round((stats.totalInvested / Math.max(1, stats.totalPP)) * 100);
-    document.getElementById('analyticsResearch').textContent = Math.round(innovation * 0.6);
+    document.getElementById('analyticsResearch').textContent = Math.round((stats.infrastructureLevels?.education || 0) * 0.6);
     
     // Тенденции и прогнозы
-    document.getElementById('analyticsStability').textContent = Math.round(stability);
-    document.getElementById('analyticsSustainability').textContent = Math.round((stability + growth) / 2);
-    document.getElementById('analyticsForecast').textContent = Math.round(growth * 0.8); // Прогноз на 6 месяцев
-    document.getElementById('analyticsRisks').textContent = Math.round(100 - stability);
+    document.getElementById('analyticsStability').textContent = Math.round(calculateStabilityIndex(history));
+    document.getElementById('analyticsSustainability').textContent = Math.round((calculateStabilityIndex(history) + (history.length > 1 ? 
+        ((history[history.length-1].totalPP - history[0].totalPP) / history[0].totalPP) * 100 : 0)) / 2);
+    document.getElementById('analyticsForecast').textContent = Math.round((history.length > 1 ? 
+        ((history[history.length-1].totalPP - history[0].totalPP) / history[0].totalPP) * 100 : 5) * 0.8);
+    document.getElementById('analyticsRisks').textContent = Math.round(100 - calculateStabilityIndex(history));
     document.getElementById('analyticsEfficiency').textContent = Math.round(calculateSystemEfficiency(stats));
     
     // Ключевые метрики
-    updateKeyMetrics(stats, history);
+    document.getElementById('metricAvgPPGrowth').textContent = history.length > 1 ? 
+        Math.round(((history[history.length-1].totalPP - history[0].totalPP) / history[0].totalPP) * 100) : 0;
+    document.getElementById('metricInvestmentEfficiency').textContent = Math.round(stats.monthlyInvestmentIncome / Math.max(1, stats.totalInvestment) * 100);
+    document.getElementById('metricInfraROI').textContent = Math.round(stats.infrastructureCount > 0 ? 
+        (stats.totalPP / Math.max(1, stats.infrastructureCount * 1000)) : 0);
+    document.getElementById('metricSocialCapital').textContent = Math.round((stats.averageSatisfaction + (stats.totalSocial / Math.max(1, stats.totalPP) * 100)) / 2);
+    document.getElementById('metricDevelopmentIndex').textContent = Math.round(calculateQualityOfLife(stats));
+    
+    // Простой текстовый график
+    updateHistoryChart(history);
     
     console.log('📊 Обновлена аналитика');
 }
 
 function calculateQualityOfLife(stats) {
     const factors = [
-        stats.averageSatisfaction,
-        stats.infrastructureLevels.education || 0,
-        stats.infrastructureLevels.healthcare || 0,
-        stats.infrastructureLevels.mobility || 0,
+        stats.averageSatisfaction || 0,
+        (stats.infrastructureLevels?.education || 0),
+        (stats.infrastructureLevels?.healthcare || 0),
+        (stats.infrastructureLevels?.mobility || 0),
         (stats.totalPP / Math.max(1, stats.totalResidents)) / 10
     ];
     
     return factors.reduce((sum, factor) => sum + factor, 0) / factors.length;
 }
 
-function calculateGrowthRate(history) {
-    if (history.length < 2) return 0;
-    
-    const recent = history.slice(-6); // Последние 6 месяцев
-    if (recent.length < 2) return 0;
-    
-    const first = recent[0].totalPP;
-    const last = recent[recent.length - 1].totalPP;
-    
-    return ((last - first) / first) * 100;
-}
-
 function calculateInnovationIndex(stats) {
     const factors = [
         (stats.totalInvested / Math.max(1, stats.totalPP)) * 100,
-        stats.infrastructureLevels.education || 0,
+        stats.infrastructureLevels?.education || 0,
         (stats.investments.length / Math.max(1, stats.totalResidents)) * 100,
         stats.infrastructureEfficiency
     ];
@@ -108,34 +101,60 @@ function calculateSystemEfficiency(stats) {
     return factors.reduce((sum, factor) => sum + factor, 0) / factors.length;
 }
 
-function updateKeyMetrics(stats, history) {
-    // Средний рост ПП
-    const ppGrowth = calculateGrowthRate(history);
-    document.getElementById('metricAvgPPGrowth').textContent = Math.round(ppGrowth);
+function updateHistoryChart(history) {
+    const chartContainer = document.getElementById('historyChart');
+    if (!chartContainer || history.length < 2) {
+        chartContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">График развития будет отображаться здесь после сбора данных</p>';
+        return;
+    }
     
-    // Эффективность инвестиций
-    const investmentEfficiency = stats.monthlyInvestmentIncome / Math.max(1, stats.totalInvestment) * 100;
-    document.getElementById('metricInvestmentEfficiency').textContent = Math.round(investmentEfficiency);
+    // Простой текстовый график роста ПП
+    let chartHTML = '<div style="font-family: monospace; font-size: 12px; line-height: 1.2;">';
+    chartHTML += '<div style="margin-bottom: 10px; font-weight: bold;">📈 История развития ПП:</div>';
     
-    // Окупаемость инфраструктуры
-    const infraROI = stats.infrastructureCount > 0 ? 
-        (stats.totalPP / Math.max(1, stats.infrastructureCount * 1000)) : 0;
-    document.getElementById('metricInfraROI').textContent = Math.round(infraROI);
+    const maxPP = Math.max(...history.map(h => h.totalPP));
+    const chartHeight = 8;
+    const chartWidth = Math.min(20, history.length);
     
-    // Социальный капитал
-    const socialCapital = (stats.averageSatisfaction + (stats.totalSocial / Math.max(1, stats.totalPP) * 100)) / 2;
-    document.getElementById('metricSocialCapital').textContent = Math.round(socialCapital);
+    // Берем последние данные для графика
+    const recentHistory = history.slice(-chartWidth);
     
-    // Индекс развития
-    const developmentIndex = (ppGrowth + investmentEfficiency + socialCapital) / 3;
-    document.getElementById('metricDevelopmentIndex').textContent = Math.round(developmentIndex);
+    for (let i = 0; i < chartHeight; i++) {
+        let line = '';
+        const threshold = maxPP * (chartHeight - i) / chartHeight;
+        
+        recentHistory.forEach(month => {
+            line += month.totalPP >= threshold ? '█' : '░';
+        });
+        
+        chartHTML += `<div>${line}</div>`;
+    }
+    
+    // Подписи месяцев
+    let monthsLine = '';
+    recentHistory.forEach((month, index) => {
+        if (index % 3 === 0) {
+            monthsLine += `M${month.month}`.padEnd(4, ' ');
+        } else {
+            monthsLine += '    ';
+        }
+    });
+    chartHTML += `<div style="margin-top: 5px;">${monthsLine}</div>`;
+    
+    // Легенда
+    chartHTML += `<div style="margin-top: 10px; font-size: 10px; color: #666;">`;
+    chartHTML += `Макс: ${Math.round(maxPP)} ПП | Всего месяцев: ${history.length}`;
+    chartHTML += `</div>`;
+    
+    chartHTML += '</div>';
+    chartContainer.innerHTML = chartHTML;
 }
 
-// Функции генерации отчетов
+// Функции отчетов
 function generateEconomicReport() {
-    if (!simulation) return;
+    if (!window.simulation) return;
     
-    const stats = simulation.getStats();
+    const stats = window.simulation.getStats();
     const report = `
 📊 ЭКОНОМИЧЕСКИЙ ОТЧЕТ DPPN
 ============================
@@ -157,10 +176,6 @@ function generateEconomicReport() {
 • Активных проектов: ${stats.activeInvestments}
 • Общий объем: ${Math.round(stats.totalInvestment)}
 • Ежемесячный доход: ${Math.round(stats.monthlyInvestmentIncome)}
-
-📈 ПОКАЗАТЕЛИ:
-• Качество жизни: ${Math.round(calculateQualityOfLife(stats))}/100
-• Стабильность системы: ${Math.round(calculateStabilityIndex(simulation.history))}/100
     `;
     
     alert(report);
@@ -168,9 +183,9 @@ function generateEconomicReport() {
 }
 
 function generateSocialReport() {
-    if (!simulation) return;
+    if (!window.simulation) return;
     
-    const stats = simulation.getStats();
+    const stats = window.simulation.getStats();
     const report = `
 👥 СОЦИАЛЬНЫЙ ОТЧЕТ DPPN
 ========================
@@ -184,44 +199,16 @@ function generateSocialReport() {
 • Образование: ${Math.round(stats.infrastructureLevels.education || 0)}/100
 • Здравоохранение: ${Math.round(stats.infrastructureLevels.healthcare || 0)}/100
 • Мобильность: ${Math.round(stats.infrastructureLevels.mobility || 0)}/100
-
-💰 СОЦИАЛЬНЫЕ ИНВЕСТИЦИИ:
-• В голоса: ${Math.round(stats.totalVotes)} ПП
-• В социальные проекты: ${Math.round(stats.totalSocial)} ПП
-• Общие инвестиции жителей: ${Math.round(stats.totalInvested)} ПП
-
-📈 ТЕНДЕНЦИИ:
-• Рост удовлетворенности: ${calculateSatisfactionTrend(simulation.history)}
-• Социальная активность: ${calculateSocialActivity(stats)}
     `;
     
     alert(report);
     console.log('👥 Сгенерирован социальный отчет');
 }
 
-function calculateSatisfactionTrend(history) {
-    if (history.length < 2) return "стабильная";
-    
-    const recent = history.slice(-3);
-    const trend = recent[recent.length - 1].averageSatisfaction - recent[0].averageSatisfaction;
-    
-    if (trend > 5) return "растущая 📈";
-    if (trend < -5) return "снижающаяся 📉";
-    return "стабильная ➡️";
-}
-
-function calculateSocialActivity(stats) {
-    const activity = (stats.totalVotes + stats.totalSocial) / Math.max(1, stats.totalPP) * 100;
-    
-    if (activity > 20) return "высокая 🎯";
-    if (activity > 10) return "средняя 👍";
-    return "низкая 👎";
-}
-
 function generateInfrastructureReport() {
-    if (!simulation) return;
+    if (!window.simulation) return;
     
-    const stats = simulation.getStats();
+    const stats = window.simulation.getStats();
     const report = `
 🏢 ИНФРАСТРУКТУРНЫЙ ОТЧЕТ DPPN
 ================================
@@ -231,133 +218,60 @@ function generateInfrastructureReport() {
 • Общий уровень: ${stats.infrastructureLevel}
 • Средняя эффективность: ${Math.round(stats.infrastructureEfficiency)}%
 
-🎯 РАСПРЕДЕЛЕНИЕ:
-${getInfrastructureDistribution(simulation.infrastructure)}
-
 ⚡ ЭФФЕКТИВНОСТЬ:
 • Образование: +${Math.round((stats.infrastructureLevels.education || 0) * 10)}%
 • Здравоохранение: +${Math.round((stats.infrastructureLevels.healthcare || 0) * 10)}%
 • Мобильность: +${Math.round((stats.infrastructureLevels.mobility || 0) * 10)}%
-• Продуктивность: +${Math.round((stats.infrastructureLevels.productivity || 0) * 10)}%
-
-💰 ФИНАНСЫ:
-• Общественные фонды: ${Math.round(stats.publicFunds)} ПП
-• Рекомендуется на обслуживание: ${Math.round(calculateMaintenanceNeed(simulation.infrastructure))} ПП
     `;
     
     alert(report);
     console.log('🏢 Сгенерирован инфраструктурный отчет');
 }
 
-function getInfrastructureDistribution(infrastructure) {
-    const types = {};
-    infrastructure.forEach(infra => {
-        types[infra.type] = (types[infra.type] || 0) + 1;
-    });
-    
-    let distribution = '';
-    Object.keys(types).forEach(type => {
-        const config = CONFIG.INFRASTRUCTURE_TYPES[type];
-        distribution += `• ${config.icon} ${config.name}: ${types[type]} объектов\n`;
-    });
-    
-    return distribution || '• Нет данных';
-}
-
-function calculateMaintenanceNeed(infrastructure) {
-    return infrastructure.reduce((sum, infra) => {
-        if (infra.condition < 80) {
-            return sum + infra.getMaintenanceCost();
-        }
-        return sum;
-    }, 0);
-}
-
 function generateInvestmentReport() {
-    if (!simulation) return;
+    if (!window.simulation) return;
     
-    const stats = simulation.getStats();
+    const stats = window.simulation.getStats();
     const report = `
 💼 ИНВЕСТИЦИОННЫЙ ОТЧЕТ DPPN
 =============================
 
 📊 ОБЩАЯ СТАТИСТИКА:
-• Всего проектов: ${simulation.investments.length}
+• Всего проектов: ${window.simulation.investments.length}
 • Активных: ${stats.activeInvestments}
 • Завершенных: ${stats.completedInvestments}
 
 💰 ФИНАНСЫ:
 • Общий объем: ${Math.round(stats.totalInvestment)} ПП
 • Ежемесячный доход: ${Math.round(stats.monthlyInvestmentIncome)} ПП
-• Общая доходность: ${Math.round(stats.monthlyInvestmentIncome / Math.max(1, stats.totalInvestment) * 1200)}%
-
-🎯 СТРАТЕГИЯ:
-• Текущая: ${getStrategyName(stats.investmentStrategy)}
 • Авто-инвестиции: ${stats.autoInvestEnabled ? 'Включены ✅' : 'Выключены ❌'}
-
-📈 РЕКОМЕНДАЦИИ:
-${getInvestmentRecommendations(stats)}
     `;
     
     alert(report);
     console.log('💼 Сгенерирован инвестиционный отчет');
 }
 
-function getInvestmentRecommendations(stats) {
-    const needs = simulation.analyzeSystemNeeds();
-    const maxNeed = Math.max(needs.education, needs.healthcare, needs.technology, needs.business);
-    
-    let recommendations = '';
-    
-    if (maxNeed === needs.education) {
-        recommendations = '• Приоритет: образовательные проекты 🎓\n• Рекомендуется создать 1-2 новых проекта';
-    } else if (maxNeed === needs.healthcare) {
-        recommendations = '• Приоритет: медицинские проекты 🏥\n• Рекомендуется создать 1-2 новых проекта';
-    } else if (maxNeed === needs.technology) {
-        recommendations = '• Приоритет: технологические проекты 🔬\n• Высокий риск, но высокая доходность';
-    } else {
-        recommendations = '• Приоритет: бизнес-проекты 💼\n• Стабильный доход, умеренный риск';
-    }
-    
-    if (stats.publicFunds < 1000) {
-        recommendations += '\n• ⚠️ Низкий уровень общественных фондов';
-    }
-    
-    return recommendations;
-}
-
 function exportAllData() {
-    if (!simulation) return;
+    if (!window.simulation) return;
     
     const data = {
-        simulation: {
-            month: simulation.month,
-            publicFunds: simulation.publicFunds,
-            stats: simulation.getStats(),
-            systemStats: simulation.systemStats
-        },
-        residents: simulation.residents.map(r => r.getDisplayData()),
-        infrastructure: simulation.infrastructure.map(i => i.getDisplayData()),
-        investments: simulation.investments.map(i => i.getDisplayData()),
-        history: simulation.history,
-        config: CONFIG,
+        simulation: window.simulation.getStats(),
+        residents: window.simulation.residents.length,
+        infrastructure: window.simulation.infrastructure.length,
+        investments: window.simulation.investments.length,
         exportDate: new Date().toISOString()
     };
     
     const json = JSON.stringify(data, null, 2);
-    downloadJSON(json, 'dppn_simulation_data.json');
-    
-    console.log('💾 Экспортированы все данные симуляции');
-}
-
-function downloadJSON(json, filename) {
     const blob = new Blob([json], { type: 'application/json' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.setAttribute('hidden', '');
     a.setAttribute('href', url);
-    a.setAttribute('download', filename);
+    a.setAttribute('download', 'dppn_simulation_data.json');
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    
+    console.log('💾 Экспортированы все данные симуляции');
 }

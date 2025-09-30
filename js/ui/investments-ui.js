@@ -1,16 +1,16 @@
 // UI для управления инвестициями
+// В функции updateInvestmentsList обновляем отображение:
 function updateInvestmentsList() {
-    if (!simulation) return;
+    if (!window.simulation) return;
     
     const container = document.getElementById('investmentsContainer');
     if (!container) return;
     
     container.innerHTML = '';
     
-    // Обновляем статистику инвестиций
     updateInvestmentStats();
     
-    simulation.investments.forEach(investment => {
+    window.simulation.investments.forEach(investment => {
         const data = investment.getDisplayData();
         const card = document.createElement('div');
         card.className = 'investment-card';
@@ -23,22 +23,33 @@ function updateInvestmentsList() {
                 <div class="progress-fill" style="width: ${data.progress}%;"></div>
             </div>`;
         
+        // Индикатор производительности
+        const performanceIndicator = data.isCompleted ? 
+            `<div style="color: ${getPerformanceColor(data.performance)}; font-weight: bold;">
+                📊 Факт. доходность: ${data.actualReturnRate}% 
+                ${data.performance === 'above' ? '📈' : data.performance === 'below' ? '📉' : '➡️'}
+            </div>` : '';
+        
         card.innerHTML = `
             <div class="card-header">
                 <div class="card-title">${data.icon} ${data.name}</div>
-                <div class="level-badge" style="background: ${getRiskColor(data.risk)};">Риск: ${data.risk}%</div>
+                <div class="level-badge" style="background: ${getRiskColor(data.risk)};">
+                    ${data.category} | Риск: ${data.risk}%
+                </div>
             </div>
             <div class="resident-details">
                 <div>${data.description}</div>
                 <div>📊 Прогресс: ${data.progress}%</div>
                 ${progressBar}
                 <div>💰 Инвестировано: ${data.currentInvestment}/${data.totalInvestment} ПП</div>
-                <div>🎯 Доходность: ${data.returnRate}% годовых</div>
+                <div>🎯 Ожидаемая доходность: ${data.returnRate}% годовых</div>
+                ${performanceIndicator}
                 <div>⏰ Срок: ${data.monthsRemaining} месяцев</div>
                 <div>👥 Инвесторов: ${data.investors}</div>
                 ${data.isCompleted ? 
                     `<div style="color: #27ae60; font-weight: bold;">✅ Завершен</div>
-                     <div>📈 Ежемесячный доход: ${data.monthlyReturn} ПП</div>` :
+                     <div>📈 Ежемесячный доход: ${data.monthlyReturn} ПП</div>
+                     <div>💵 Общий доход: ${data.totalReturns} ПП (ROI: ${data.roi}%)</div>` :
                     `<div style="color: #e67e22; font-weight: bold;">🔄 В процессе</div>`
                 }
                 ${!data.isCompleted ? `
@@ -52,8 +63,15 @@ function updateInvestmentsList() {
         `;
         container.appendChild(card);
     });
-    
-    console.log(`💼 Обновлен список инвестиций: ${simulation.investments.length} проектов`);
+}
+
+function getPerformanceColor(performance) {
+    const colors = {
+        'above': '#27ae60',
+        'meeting': '#f39c12', 
+        'below': '#e74c3c'
+    };
+    return colors[performance] || '#f39c12';
 }
 
 function updateInvestmentStats() {

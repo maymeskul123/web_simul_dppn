@@ -17,7 +17,7 @@ class Resident {
         this.productivity = 1.0;
     }
     
-    simulateActivity(infrastructureLevels) {
+    simulateActivity(infrastructureLevels, currentMonth) {
         const rand = Math.random();
         let activityType = 'none';
         let ppBonus = 0;
@@ -27,6 +27,7 @@ class Resident {
         const healthBonus = infrastructureLevels.healthcare || 1;
         const productivityBonus = infrastructureLevels.productivity || 1;
         
+        // Используем CONFIG корректно:
         if (rand < CONFIG.ACTIVITY_PROBABILITIES.VOLUNTEER) {
             activityType = 'volunteer';
             ppBonus = CONFIG.VOLUNTEER_PP_BONUS * healthBonus;
@@ -45,7 +46,7 @@ class Resident {
         
         // История активности
         this.activityHistory.push({
-            month: simulation.month,
+            month: currentMonth,
             activity: activityType,
             ppEarned: monthlyPP,
             ppBalance: this.pp
@@ -77,7 +78,7 @@ class Resident {
         if (amount <= this.pp && amount > 0) {
             this.pp -= amount;
             this.invested += amount;
-            return project.addInvestment(amount);
+            return project.addInvestment(amount, this);
         }
         return false;
     }

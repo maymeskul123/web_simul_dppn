@@ -1,45 +1,52 @@
-// UI для управления инфраструктурой
+// infrastructure-ui.js - UI для инфраструктуры
 function updateInfrastructureList() {
     if (!window.simulation) return;
     
     const container = document.getElementById('infrastructureContainer');
+    const stats = window.simulation.getStats();
+    
     if (!container) return;
+    
+    // Обновляем заголовок с балансом
+    const panel = document.querySelector('.infrastructure-panel h2');
+    if (panel) {
+        panel.textContent = `🏢 Управление инфраструктурой | Баланс: ${Math.round(stats.publicFunds)} ПП`;
+    }
     
     container.innerHTML = '';
     
-    // Обновляем статистику инфраструктуры
-    updateInfrastructureStats();
-    
+    // Показываем текущую инфраструктуру
     window.simulation.infrastructure.forEach(infra => {
         const data = infra.getDisplayData();
         const card = document.createElement('div');
         card.className = 'infrastructure-card';
         
-        // Специфическая информация в зависимости от категории
         let specificInfo = '';
         switch(data.category) {
             case 'energy':
-                specificInfo = `<div>⚡ Выработка энергии: ${data.energyOutput} ед.</div>`;
+                specificInfo = `<div>⚡ Выработка: ${data.energyOutput} ед.</div>`;
                 break;
             case 'agriculture':
-                specificInfo = `<div>🌾 Производство еды: ${data.foodOutput} ед.</div>`;
+                specificInfo = `<div>🌾 Производство: ${data.foodOutput} ед.</div>`;
                 break;
             case 'industry':
                 specificInfo = `<div>🏭 Производство: ${data.productionOutput} ед.</div>`;
-                if (data.innovationOutput > 0) {
-                    specificInfo += `<div>🔬 Инновации: ${data.innovationOutput} ед.</div>`;
-                }
                 break;
+            case 'commerce':
+                specificInfo = `<div>💰 Доход: ${data.commerceOutput} ед.</div>`;
+                break;
+            default:
+                specificInfo = `<div>📊 Эффект: +${data.effectValue}%</div>`;
         }
         
         card.innerHTML = `
             <div class="card-header">
                 <div class="card-title">${data.icon} ${data.name}</div>
-                <div class="level-badge">Ур. ${data.level}</div>
+                <div class="level-badge">Уровень ${data.level}</div>
             </div>
             <div class="resident-details">
                 <div>${data.description}</div>
-                <div>🏗️ Состояние: ${data.condition}%</div>
+                <div>🔄 Состояние: ${data.condition}%</div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${data.condition}%"></div>
                 </div>
@@ -47,75 +54,67 @@ function updateInfrastructureList() {
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${data.efficiency}%"></div>
                 </div>
-                <div>📈 Эффект: +${data.effectValue}% к ${getEffectName(data.effect)}</div>
                 ${specificInfo}
-                <div>💰 Обслуживание: ${data.maintenanceCost} ПП/мес</div>
+                <div>🔧 Обслуживание: ${data.maintenanceCost} ПП/месяц</div>
+                <div>⬆️ Улучшение: ${data.upgradeCost} ПП</div>
                 <div class="investment-controls">
-                    <button onclick="upgradeInfrastructure('${infra.id}')" class="success">⬆️ Улучшить (${data.upgradeCost} ПП)</button>
-                    <button onclick="repairInfrastructure('${infra.id}')" class="warning">🔧 Ремонт (${Math.round(data.maintenanceCost * 2)} ПП)</button>
+                    <button onclick="upgradeInfrastructure('${infra.id}')" class="success">⬆️ Улучшить</button>
+                    <button onclick="repairInfrastructure('${infra.id}')" class="warning">🔧 Ремонт</button>
                 </div>
             </div>
         `;
         container.appendChild(card);
     });
     
-    console.log(`🏢 Обновлен список инфраструктуры: ${window.simulation.infrastructure.length} объектов`);
+    // Если нет инфраструктуры, показываем сообщение
+    if (window.simulation.infrastructure.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: #666;">
+                <h3>🏗️ Инфраструктура не построена</h3>
+                <p>Используйте кнопки ниже для строительства объектов</p>
+                <button onclick="showInfrastructureCosts()" class="info">💰 Показать стоимость строительства</button>
+            </div>
+        `;
+    }
 }
 
-function updateInfrastructureStats() {
+// Функции для улучшения инфраструктуры
+function upgradeInfrastructure(infrastructureId) {
     if (!window.simulation) return;
     
+    const infra = window.simulation.infrastructure.find(i => i.id === infrastructureId);
+    if (!infra) return;
+    
+    const upgradeCost = infra.getUpgradeCost();
     const stats = window.simulation.getStats();
-    const levels = stats.infrastructureLevels;
     
-    // Основная статистика
-    document.getElementById('statInfrastructure').textContent = window.simulation.infrastructure.length;
-    document.getElementById('statInfraLevel').textContent = stats.infrastructureLevel;
-    document.getElementById('statInfraEfficiency').textContent = Math.round(stats.infrastructureEfficiency);
-    
-    // Расчет производства энергии и еды
-    const totalEnergy = window.simulation.infrastructure.reduce((sum, infra) => sum + infra.getEnergyOutput(), 0);
-    const totalFood = window.simulation.infrastructure.reduce((sum, infra) => sum + infra.getFoodOutput(), 0);
-    const totalProduction = window.simulation.infrastructure.reduce((sum, infra) => sum + infra.getProductionOutput(), 0);
-    
-    // Детальная статистика по типам
-    const schools = window.simulation.infrastructure.filter(i => i.type === 'SCHOOL' || i.type === 'UNIVERSITY');
-    const hospitals = window.simulation.infrastructure.filter(i => i.type === 'HOSPITAL' || i.type === 'CLINIC');
-    const transport = window.simulation.infrastructure.filter(i => i.type === 'TRANSPORT' || i.type === 'METRO');
-    const energy = window.simulation.infrastructure.filter(i => i.category === 'energy');
-    const agriculture = window.simulation.infrastructure.filter(i => i.category === 'agriculture');
-    const industry = window.simulation.infrastructure.filter(i => i.category === 'industry');
-    
-    document.getElementById('infraEducationLevel').textContent = Math.round(levels.education || 0);
-    document.getElementById('infraSchoolsCount').textContent = schools.length;
-    document.getElementById('infraEducationBonus').textContent = Math.round((levels.education || 0) * 10);
-    
-    document.getElementById('infraHealthLevel').textContent = Math.round(levels.healthcare || 0);
-    document.getElementById('infraHospitalsCount').textContent = hospitals.length;
-    document.getElementById('infraHealthBonus').textContent = Math.round((levels.healthcare || 0) * 10);
-    
-    document.getElementById('infraTransportLevel').textContent = Math.round(levels.mobility || 0);
-    document.getElementById('infraTransportCount').textContent = transport.length;
-    document.getElementById('infraTransportBonus').textContent = Math.round((levels.mobility || 0) * 10);
-    
-    document.getElementById('infraEnergyLevel').textContent = Math.round(totalEnergy / 100);
-    document.getElementById('infraEnergyCount').textContent = energy.length;
-    document.getElementById('infraEnergyBonus').textContent = Math.round(totalEnergy);
-    
-    // Добавляем новые статистики
-    document.getElementById('statEducation').textContent = Math.round(levels.education || 0);
-    document.getElementById('statHealthcare').textContent = Math.round(levels.healthcare || 0);
+    if (stats.publicFunds >= upgradeCost) {
+        if (infra.upgrade()) {
+            updateUI();
+            alert(`✅ ${infra.config.name} улучшен до уровня ${infra.level}!`);
+        } else {
+            alert('❌ Достигнут максимальный уровень улучшения');
+        }
+    } else {
+        alert(`❌ Недостаточно средств. Нужно: ${Math.round(upgradeCost)} ПП`);
+    }
 }
 
-function getEffectName(effect) {
-    const effects = {
-        'education': 'образованию',
-        'healthcare': 'здоровью',
-        'mobility': 'мобильности',
-        'energy': 'энергии',
-        'food': 'производству еды',
-        'production': 'производству',
-        'innovation': 'инновациям'
-    };
-    return effects[effect] || effect;
+function repairInfrastructure(infrastructureId) {
+    if (!window.simulation) return;
+    
+    const infra = window.simulation.infrastructure.find(i => i.id === infrastructureId);
+    if (!infra) return;
+    
+    const repairCost = infra.getMaintenanceCost() * 2;
+    const stats = window.simulation.getStats();
+    
+    if (stats.publicFunds >= repairCost) {
+        window.simulation.publicFunds -= repairCost;
+        infra.maintain();
+        updateUI();
+        alert(`✅ ${infra.config.name} отремонтирован за ${Math.round(repairCost)} ПП!`);
+    } else {
+        alert(`❌ Недостаточно средств. Нужно: ${Math.round(repairCost)} ПП`);
+    }
 }
